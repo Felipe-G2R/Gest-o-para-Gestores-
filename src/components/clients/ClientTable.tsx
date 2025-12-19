@@ -56,7 +56,17 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
             ) : (
               clients.map((client) => (
                 <tr key={client.id} className="hover">
-                  <td className="font-medium">{client.name}</td>
+                  <td>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{client.name}</span>
+                      {client.medicalSpecialty && (
+                        <span className="text-xs text-primary">
+                          {client.medicalSpecialty}
+                          {client.professionalRegistry && ` • ${client.professionalRegistry}`}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td>{client.location}</td>
                   <td>
                     <span

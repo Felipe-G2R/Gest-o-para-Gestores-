@@ -12,6 +12,8 @@ interface ClientFormModalProps {
 
 const initialFormData: ClientFormData = {
   name: '',
+  medicalSpecialty: null,
+  professionalRegistry: null,
   location: '',
   paymentMethod: 'pix',
   monthlyBudget: 0,
@@ -33,6 +35,8 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
     if (show && client) {
       setForm({
         name: client.name,
+        medicalSpecialty: client.medicalSpecialty,
+        professionalRegistry: client.professionalRegistry,
         location: client.location,
         paymentMethod: client.paymentMethod,
         monthlyBudget: client.monthlyBudget,
@@ -94,6 +98,39 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 className="input input-bordered"
                 required
               />
+            </div>
+
+            {/* Especialidade Médica */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Especialidade Médica</span>
+              </label>
+              <input
+                type="text"
+                value={form.medicalSpecialty || ''}
+                onChange={(e) => setForm({ ...form, medicalSpecialty: e.target.value || null })}
+                placeholder="Cardiologia, Dermatologia, etc."
+                className="input input-bordered"
+              />
+            </div>
+
+            {/* Registro Profissional */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Registro Profissional</span>
+              </label>
+              <input
+                type="text"
+                value={form.professionalRegistry || ''}
+                onChange={(e) => setForm({ ...form, professionalRegistry: e.target.value || null })}
+                placeholder="CRM 12345-SP"
+                className="input input-bordered"
+              />
+              <label className="label">
+                <span className="label-text-alt text-base-content/60">
+                  Ex: CRM 12345-SP, CRO 6789-RJ
+                </span>
+              </label>
             </div>
 
             {/* Localidade */}

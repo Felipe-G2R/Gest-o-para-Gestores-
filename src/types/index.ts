@@ -16,6 +16,8 @@ export interface Client {
   id: string
   userId: string
   name: string
+  medicalSpecialty: string | null
+  professionalRegistry: string | null
   location: string
   paymentMethod: PaymentMethod
   monthlyBudget: number
