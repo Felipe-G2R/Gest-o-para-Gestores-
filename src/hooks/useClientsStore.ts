@@ -27,6 +27,8 @@ const mapClient = (dbClient: any): Client => ({
   id: dbClient.id,
   userId: dbClient.user_id,
   name: dbClient.name,
+  medicalSpecialty: dbClient.medical_specialty,
+  professionalRegistry: dbClient.professional_registry,
   location: dbClient.location,
   paymentMethod: dbClient.payment_method,
   monthlyBudget: parseFloat(dbClient.monthly_budget),
@@ -98,6 +100,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
         .insert({
           user_id: userId,
           name: data.name,
+          medical_specialty: data.medicalSpecialty,
+          professional_registry: data.professionalRegistry,
           location: data.location,
           payment_method: data.paymentMethod,
           monthly_budget: data.monthlyBudget,
@@ -130,6 +134,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
     try {
       const updateData: any = {}
       if (data.name) updateData.name = data.name
+      if (data.medicalSpecialty !== undefined) updateData.medical_specialty = data.medicalSpecialty
+      if (data.professionalRegistry !== undefined) updateData.professional_registry = data.professionalRegistry
       if (data.location !== undefined) updateData.location = data.location
       if (data.paymentMethod) updateData.payment_method = data.paymentMethod
       if (data.monthlyBudget !== undefined) updateData.monthly_budget = data.monthlyBudget

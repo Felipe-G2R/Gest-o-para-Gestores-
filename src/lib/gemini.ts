@@ -16,23 +16,18 @@ interface GeminiModel {
   isImageModel?: boolean
 }
 
-// Modelos disponíveis do Gemini
+// Modelos disponíveis do Gemini (Atualizados Dez/2025)
 export const GEMINI_MODELS: GeminiModel[] = [
-  // Gemini 2.5 (Mais recentes)
-  { id: 'gemini-2.5-pro-preview-06-05', name: 'Gemini 2.5 Pro', description: 'Modelo mais avançado para tarefas complexas' },
-  { id: 'gemini-2.5-flash-preview-05-20', name: 'Gemini 2.5 Flash', description: 'Rápido e eficiente para uso geral' },
+  // Gemini 3 (Mais recentes - Dezembro 2025)
+  { id: 'gemini-3-pro-preview', name: 'Gemini 3 Pro', description: 'Modelo mais avançado e capaz' },
+  { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash', description: 'Rápido e eficiente' },
+  { id: 'gemini-3-pro-image-preview', name: 'Gemini 3 Pro Image', description: 'Geração de imagens avançada', isImageModel: true },
 
-  // Gemini 2.0
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', description: 'Velocidade otimizada' },
-  { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite', description: 'Versão leve e rápida' },
-
-  // Gemini 1.5
-  { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro', description: 'Alto desempenho geral' },
-  { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', description: 'Respostas rápidas' },
-  { id: 'gemini-1.5-flash-8b', name: 'Gemini 1.5 Flash 8B', description: 'Modelo compacto' },
-
-  // Geração de Imagens
-  { id: 'imagen-3.0-generate-002', name: 'Imagen 3', description: 'Geração de imagens de alta qualidade', isImageModel: true },
+  // Gemini 2.5 (Estáveis)
+  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', description: 'Alto desempenho com thinking' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', description: 'Melhor custo-benefício' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite', description: 'Ultra-rápido e econômico' },
+  { id: 'gemini-2.5-flash-image', name: 'Nano Banana', description: 'Geração de imagens (Flash Image)', isImageModel: true },
 ]
 
 export type GeminiModelId = string
@@ -58,8 +53,8 @@ export const sendMessage = async (modelId: string, message: string, history: { r
 }
 
 // Função para gerar imagem
-export const generateImage = async (prompt: string) => {
-  const model = genAI.getGenerativeModel({ model: 'imagen-3.0-generate-002' })
+export const generateImage = async (prompt: string, modelId: string = 'gemini-2.5-flash-image') => {
+  const model = genAI.getGenerativeModel({ model: modelId })
 
   const result = await model.generateContent({
     contents: [{ role: 'user', parts: [{ text: prompt }] }],

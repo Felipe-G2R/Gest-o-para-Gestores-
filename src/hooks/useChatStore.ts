@@ -26,7 +26,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sessions: [],
   currentSession: null,
   messages: [],
-  selectedModel: 'gemini-2.0-flash',
+  selectedModel: 'gemini-2.5-flash',
   loading: false,
   sending: false,
   error: null,
@@ -220,7 +220,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
       if (modelInfo?.isImageModel) {
         // Gerar imagem
-        const imageResult = await generateImage(content)
+        const imageResult = await generateImage(content, selectedModel)
         if (imageResult) {
           // Upload para Supabase Storage
           const fileName = `${session.id}/${crypto.randomUUID()}.png`
