@@ -9,6 +9,7 @@ import {
   ClientDetailPage,
   SettingsPage,
   TMIPage,
+  GerencIAPage,
 } from '@/pages'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -76,6 +77,14 @@ function App() {
           element={
             <ProtectedRoute>
               <TMIPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gerencia"
+          element={
+            <ProtectedRoute>
+              <GerencIAPage />
             </ProtectedRoute>
           }
         />

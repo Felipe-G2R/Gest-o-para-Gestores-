@@ -48,3 +48,23 @@ export interface Task {
 }
 
 export type TaskFormData = Omit<Task, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+
+// Chat Types
+export interface ChatMessage {
+  id: string
+  sessionId: string
+  role: 'user' | 'model'
+  content: string
+  imageUrl?: string | null
+  modelId: string
+  createdAt: string
+}
+
+export interface ChatSession {
+  id: string
+  userId: string
+  title: string
+  modelId: string
+  createdAt: string
+  updatedAt: string
+}

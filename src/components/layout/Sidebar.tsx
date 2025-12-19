@@ -10,12 +10,14 @@ import {
   ChevronRight,
   User,
   Target,
+  Bot,
 } from 'lucide-react'
 
 const menuItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Clientes', path: '/clients', icon: Users },
   { name: 'TMI', path: '/tmi', icon: Target },
+  { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot },
   { name: 'Configurações', path: '/settings', icon: Settings },
 ]
 
@@ -38,14 +40,14 @@ export function Sidebar() {
       <div className="h-16 flex items-center justify-between px-4 border-b border-base-300">
         {!collapsed ? (
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-lg font-bold text-white">GG</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <Bot className="w-6 h-6 text-white" />
             </div>
-            <span className="font-bold text-lg">Gestão</span>
+            <span className="font-bold text-lg">Gerenc<span className="text-primary">[IA]</span></span>
           </div>
         ) : (
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mx-auto">
-            <span className="text-lg font-bold text-white">GG</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mx-auto">
+            <Bot className="w-6 h-6 text-white" />
           </div>
         )}
 
