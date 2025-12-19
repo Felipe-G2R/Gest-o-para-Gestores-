@@ -20,6 +20,8 @@ export interface Client {
   paymentMethod: PaymentMethod
   monthlyBudget: number
   campaignLink: string | null
+  whatsappGroup: string | null
+  whatsappContact: string | null
   notes: string | null
   status: ClientStatus
   createdAt: string

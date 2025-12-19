@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Client, ClientFormData } from '@/types'
 import { useClientsStore } from '@/hooks/useClientsStore'
 import { useAuthStore } from '@/hooks/useAuthStore'
-import { X, Save } from 'lucide-react'
+import { X, Save, Users, MessageCircle } from 'lucide-react'
 
 interface ClientFormModalProps {
   show: boolean
@@ -16,6 +16,8 @@ const initialFormData: ClientFormData = {
   paymentMethod: 'pix',
   monthlyBudget: 0,
   campaignLink: null,
+  whatsappGroup: null,
+  whatsappContact: null,
   notes: null,
   status: 'active',
 }
@@ -35,6 +37,8 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
         paymentMethod: client.paymentMethod,
         monthlyBudget: client.monthlyBudget,
         campaignLink: client.campaignLink,
+        whatsappGroup: client.whatsappGroup,
+        whatsappContact: client.whatsappContact,
         notes: client.notes,
         status: client.status,
       })
@@ -157,6 +161,49 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 placeholder="https://business.facebook.com/..."
                 className="input input-bordered"
               />
+            </div>
+
+            {/* Grupo do WhatsApp */}
+            <div className="form-control md:col-span-2">
+              <label className="label">
+                <span className="label-text font-medium flex items-center gap-2">
+                  <Users className="w-4 h-4 text-success" />
+                  Grupo do WhatsApp
+                </span>
+              </label>
+              <input
+                type="url"
+                value={form.whatsappGroup || ''}
+                onChange={(e) =>
+                  setForm({ ...form, whatsappGroup: e.target.value || null })
+                }
+                placeholder="https://chat.whatsapp.com/..."
+                className="input input-bordered"
+              />
+            </div>
+
+            {/* Contato WhatsApp */}
+            <div className="form-control md:col-span-2">
+              <label className="label">
+                <span className="label-text font-medium flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4 text-success" />
+                  Contato Pessoal (WhatsApp)
+                </span>
+              </label>
+              <input
+                type="tel"
+                value={form.whatsappContact || ''}
+                onChange={(e) =>
+                  setForm({ ...form, whatsappContact: e.target.value || null })
+                }
+                placeholder="5511999999999 (apenas números com DDD)"
+                className="input input-bordered"
+              />
+              <label className="label">
+                <span className="label-text-alt text-base-content/60">
+                  Digite o número com código do país e DDD. Ex: 5511999999999
+                </span>
+              </label>
             </div>
 
             {/* Status */}

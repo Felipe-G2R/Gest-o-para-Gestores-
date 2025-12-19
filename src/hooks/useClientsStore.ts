@@ -31,6 +31,8 @@ const mapClient = (dbClient: any): Client => ({
   paymentMethod: dbClient.payment_method,
   monthlyBudget: parseFloat(dbClient.monthly_budget),
   campaignLink: dbClient.campaign_link,
+  whatsappGroup: dbClient.whatsapp_group,
+  whatsappContact: dbClient.whatsapp_contact,
   notes: dbClient.notes,
   status: dbClient.status,
   createdAt: dbClient.created_at,
@@ -100,6 +102,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
           payment_method: data.paymentMethod,
           monthly_budget: data.monthlyBudget,
           campaign_link: data.campaignLink,
+          whatsapp_group: data.whatsappGroup,
+          whatsapp_contact: data.whatsappContact,
           notes: data.notes,
           status: data.status,
         })
@@ -130,6 +134,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
       if (data.paymentMethod) updateData.payment_method = data.paymentMethod
       if (data.monthlyBudget !== undefined) updateData.monthly_budget = data.monthlyBudget
       if (data.campaignLink !== undefined) updateData.campaign_link = data.campaignLink
+      if (data.whatsappGroup !== undefined) updateData.whatsapp_group = data.whatsappGroup
+      if (data.whatsappContact !== undefined) updateData.whatsapp_contact = data.whatsappContact
       if (data.notes !== undefined) updateData.notes = data.notes
       if (data.status) updateData.status = data.status
 
