@@ -123,40 +123,8 @@ export function TMIPage() {
   const urgentTasks = tasks.filter((t) => t.isUrgent || t.priority === 'urgent')
   const normalTasks = tasks.filter((t) => !t.isUrgent && t.priority !== 'urgent')
 
-  const StatusButtons = ({ task }: { task: Task }) => (
-    <div className="join">
-      <button
-        onClick={(e) => { e.stopPropagation(); handleStatusChange(task.id, 'done'); }}
-        className={`join-item btn btn-sm ${task.status === 'done' ? statusConfig.done.activeClass : statusConfig.done.class}`}
-        title="Fiz"
-      >
-        <CheckCircle2 className="w-4 h-4" />
-        <span className="hidden sm:inline ml-1">Fiz</span>
-      </button>
-      <button
-        onClick={(e) => { e.stopPropagation(); handleStatusChange(task.id, 'not_done'); }}
-        className={`join-item btn btn-sm ${task.status === 'not_done' ? statusConfig.not_done.activeClass : statusConfig.not_done.class}`}
-        title="Não Fiz"
-      >
-        <XCircle className="w-4 h-4" />
-        <span className="hidden sm:inline ml-1">Não Fiz</span>
-      </button>
-      <button
-        onClick={(e) => { e.stopPropagation(); handleStatusChange(task.id, 'pending'); }}
-        className={`join-item btn btn-sm ${task.status === 'pending' ? statusConfig.pending.activeClass : statusConfig.pending.class}`}
-        title="A Fazer"
-      >
-        <Clock className="w-4 h-4" />
-        <span className="hidden sm:inline ml-1">A Fazer</span>
-      </button>
-    </div>
-  )
-
   const TaskRow = ({ task }: { task: Task }) => (
-    <tr
-      className="hover cursor-pointer transition-colors"
-      onClick={() => openEditModal(task)}
-    >
+    <tr className="hover">
       <td className="font-mono text-sm">{formatDate(task.dueDate)}</td>
       <td>
         <div className="flex items-center gap-2">
@@ -175,11 +143,40 @@ export function TMIPage() {
           {priorityConfig[task.priority].label}
         </span>
       </td>
-      <td onClick={(e) => e.stopPropagation()}>
-        <StatusButtons task={task} />
-      </td>
-      <td onClick={(e) => e.stopPropagation()}>
-        <div className="flex gap-1">
+      <td>
+        <div className="flex items-center gap-2">
+          {/* Status Buttons */}
+          <div className="join">
+            <button
+              onClick={() => handleStatusChange(task.id, 'done')}
+              className={`join-item btn btn-sm ${task.status === 'done' ? statusConfig.done.activeClass : statusConfig.done.class}`}
+              title="Fiz"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="hidden lg:inline ml-1">Fiz</span>
+            </button>
+            <button
+              onClick={() => handleStatusChange(task.id, 'not_done')}
+              className={`join-item btn btn-sm ${task.status === 'not_done' ? statusConfig.not_done.activeClass : statusConfig.not_done.class}`}
+              title="Não Fiz"
+            >
+              <XCircle className="w-4 h-4" />
+              <span className="hidden lg:inline ml-1">Não Fiz</span>
+            </button>
+            <button
+              onClick={() => handleStatusChange(task.id, 'pending')}
+              className={`join-item btn btn-sm ${task.status === 'pending' ? statusConfig.pending.activeClass : statusConfig.pending.class}`}
+              title="A Fazer"
+            >
+              <Clock className="w-4 h-4" />
+              <span className="hidden lg:inline ml-1">A Fazer</span>
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="divider divider-horizontal mx-0"></div>
+
+          {/* Edit & Delete Buttons */}
           <button
             onClick={() => openEditModal(task)}
             className="btn btn-sm btn-ghost text-info"
@@ -205,8 +202,7 @@ export function TMIPage() {
         <th className="w-28">Data</th>
         <th>Tarefa</th>
         <th className="w-24">Prioridade</th>
-        <th className="w-52">Status</th>
-        <th className="w-24">Ações</th>
+        <th>Ações</th>
       </tr>
     </thead>
   )
