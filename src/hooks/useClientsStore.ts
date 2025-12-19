@@ -27,8 +27,8 @@ const mapClient = (dbClient: any): Client => ({
   id: dbClient.id,
   userId: dbClient.user_id,
   name: dbClient.name,
-  medicalSpecialty: dbClient.medical_specialty,
-  professionalRegistry: dbClient.professional_registry,
+  medicalSpecialty: dbClient.medical_specialty || null,
+  professionalRegistry: dbClient.professional_registry || null,
   location: dbClient.location,
   paymentMethod: dbClient.payment_method,
   monthlyBudget: parseFloat(dbClient.monthly_budget),
@@ -95,7 +95,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
   createClient: async (data: ClientFormData, userId: string) => {
     set({ loading: true, error: null })
     try {
-      const { data: dbClient, error } = await supabase
+      // Tenta inserir com todos os campos (incluindo os novos)
+      let result = await supabase
         .from('clients')
         .insert({
           user_id: userId,
@@ -114,9 +115,29 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
         .select()
         .single()
 
-      if (error) throw error
+      // Se falhar por causa das colunas novas, tenta sem elas
+      if (result.error && result.error.message.includes('column')) {
+        result = await supabase
+          .from('clients')
+          .insert({
+            user_id: userId,
+            name: data.name,
+            location: data.location,
+            payment_method: data.paymentMethod,
+            monthly_budget: data.monthlyBudget,
+            campaign_link: data.campaignLink,
+            whatsapp_group: data.whatsappGroup,
+            whatsapp_contact: data.whatsappContact,
+            notes: data.notes,
+            status: data.status,
+          })
+          .select()
+          .single()
+      }
 
-      const newClient = mapClient(dbClient)
+      if (result.error) throw result.error
+
+      const newClient = mapClient(result.data)
       set({
         clients: [newClient, ...get().clients],
         loading: false
@@ -145,16 +166,29 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
       if (data.notes !== undefined) updateData.notes = data.notes
       if (data.status) updateData.status = data.status
 
-      const { data: dbClient, error } = await supabase
+      let result = await supabase
         .from('clients')
         .update(updateData)
         .eq('id', id)
         .select()
         .single()
 
-      if (error) throw error
+      // Se falhar por causa das colunas novas, tenta sem elas
+      if (result.error && result.error.message.includes('column')) {
+        delete updateData.medical_specialty
+        delete updateData.professional_registry
 
-      const updatedClient = mapClient(dbClient)
+        result = await supabase
+          .from('clients')
+          .update(updateData)
+          .eq('id', id)
+          .select()
+          .single()
+      }
+
+      if (result.error) throw result.error
+
+      const updatedClient = mapClient(result.data)
       const updatedClients = get().clients.map(c => c.id === id ? updatedClient : c)
 
       set({
