@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS chat_sessions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
-    model_id TEXT NOT NULL DEFAULT 'gemini-2.0-flash',
+    model_id TEXT NOT NULL DEFAULT 'gemini-2.5-flash',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
