@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { MainLayout } from '@/components/layout'
 import { CampaignButton, NotesEditor, ClientFormModal } from '@/components/clients'
 import { useClientsStore } from '@/hooks/useClientsStore'
 import { formatCurrency, formatDate } from '@/utils/format'
+import type { Client, ClientStatus } from '@/types'
 import {
   ArrowLeft,
   Edit,
@@ -19,7 +20,7 @@ export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const { clients, loading, fetchClients, getClient, updateClient, deleteClient } =
+  const { clients, loading, getClient, updateClient, deleteClient } =
     useClientsStore()
 
   const [client, setClient] = useState<Client | null>(null)
@@ -38,7 +39,7 @@ export function ClientDetailPage() {
     loadClient()
   }, [id, getClient, clients])
 
-  const statusConfig = {
+  const statusConfig: Record<ClientStatus, { label: string; class: string }> = {
     active: { label: 'Ativo', class: 'badge-success' },
     inactive: { label: 'Inativo', class: 'badge-error' },
     paused: { label: 'Pausado', class: 'badge-warning' },
