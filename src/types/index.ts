@@ -27,3 +27,22 @@ export interface Client {
 }
 
 export type ClientFormData = Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+
+// Task Types
+export type TaskStatus = 'done' | 'not_done' | 'pending'
+export type TaskPriority = 'urgent' | 'important' | 'normal'
+
+export interface Task {
+  id: string
+  userId: string
+  title: string
+  description: string | null
+  dueDate: string
+  status: TaskStatus
+  priority: TaskPriority
+  isUrgent: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type TaskFormData = Omit<Task, 'id' | 'userId' | 'createdAt' | 'updatedAt'>

@@ -8,12 +8,14 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  User
+  User,
+  Target,
 } from 'lucide-react'
 
 const menuItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Clientes', path: '/clients', icon: Users },
+  { name: 'TMI', path: '/tmi', icon: Target },
   { name: 'Configurações', path: '/settings', icon: Settings },
 ]
 

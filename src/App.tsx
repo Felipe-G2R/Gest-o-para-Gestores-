@@ -8,6 +8,7 @@ import {
   ClientsPage,
   ClientDetailPage,
   SettingsPage,
+  TMIPage,
 } from '@/pages'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -67,6 +68,14 @@ function App() {
           element={
             <ProtectedRoute>
               <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tmi"
+          element={
+            <ProtectedRoute>
+              <TMIPage />
             </ProtectedRoute>
           }
         />

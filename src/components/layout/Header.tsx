@@ -6,6 +6,7 @@ import { Sun, Moon, Bell, User } from 'lucide-react'
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/clients': 'Clientes',
+  '/tmi': 'TMI - Tarefa Mais Importante',
   '/settings': 'Configurações',
 }
 
