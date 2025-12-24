@@ -10,6 +10,8 @@ import {
   SettingsPage,
   TMIPage,
   GerencIAPage,
+  DiaryPage,
+  CalendarPage,
 } from '@/pages'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -85,6 +87,22 @@ function App() {
           element={
             <ProtectedRoute>
               <GerencIAPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/diary"
+          element={
+            <ProtectedRoute>
+              <DiaryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
             </ProtectedRoute>
           }
         />

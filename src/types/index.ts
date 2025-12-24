@@ -70,3 +70,16 @@ export interface ChatSession {
   createdAt: string
   updatedAt: string
 }
+
+// Diary Types
+export interface DiaryEntry {
+  id: string
+  userId: string
+  date: string // YYYY-MM-DD
+  title: string | null
+  content: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type DiaryEntryFormData = Omit<DiaryEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>

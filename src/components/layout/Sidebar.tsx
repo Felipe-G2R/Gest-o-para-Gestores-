@@ -11,12 +11,16 @@ import {
   User,
   Target,
   Bot,
+  BookOpen,
+  Calendar,
 } from 'lucide-react'
 
 const menuItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Clientes', path: '/clients', icon: Users },
   { name: 'TMI', path: '/tmi', icon: Target },
+  { name: 'Diário de Bordo', path: '/diary', icon: BookOpen },
+  { name: 'Calendário', path: '/calendar', icon: Calendar },
   { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot },
   { name: 'Configurações', path: '/settings', icon: Settings },
 ]

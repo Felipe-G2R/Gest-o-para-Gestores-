@@ -276,6 +276,7 @@ export function ClientDetailPage() {
           value={client.notes}
           onSave={handleSaveNotes}
           saving={savingNotes}
+          clientName={client.name}
         />
 
         {/* Edit Modal */}
