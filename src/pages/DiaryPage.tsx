@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Plus, BookOpen, Calendar } from 'lucide-react'
@@ -9,6 +9,8 @@ import type { DiaryEntry } from '@/types'
 
 export function DiaryPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth())
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear())
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<DiaryEntry | null>(null)
   const [saving, setSaving] = useState(false)
@@ -23,11 +25,16 @@ export function DiaryPage() {
     deleteEntry
   } = useDiaryStore()
 
+  // Carrega entradas quando o mês/ano muda
   useEffect(() => {
-    const month = selectedDate.getMonth()
-    const year = selectedDate.getFullYear()
-    fetchEntries(month, year)
-  }, [selectedDate, fetchEntries])
+    fetchEntries(currentMonth, currentYear)
+  }, [currentMonth, currentYear, fetchEntries])
+
+  // Callback para quando o mês mudar no seletor
+  const handleMonthChange = useCallback((month: number, year: number) => {
+    setCurrentMonth(month)
+    setCurrentYear(year)
+  }, [])
 
   const selectedDateStr = format(selectedDate, 'yyyy-MM-dd')
   const dayEntries = getEntriesByDate(selectedDateStr)
@@ -101,6 +108,7 @@ export function DiaryPage() {
               selectedDate={selectedDate}
               onSelectDate={setSelectedDate}
               entriesCount={entriesCount}
+              onMonthChange={handleMonthChange}
             />
           </div>
         </div>
