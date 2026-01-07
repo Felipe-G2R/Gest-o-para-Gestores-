@@ -37,6 +37,10 @@ const mapClient = (dbClient: any): Client => ({
   whatsappContact: dbClient.whatsapp_contact,
   notes: dbClient.notes,
   status: dbClient.status,
+  hasSecretary: dbClient.has_secretary || false,
+  secretaryName: dbClient.secretary_name || null,
+  secretaryPhone: dbClient.secretary_phone || null,
+  instagramUrl: dbClient.instagram_url || null,
   createdAt: dbClient.created_at,
   updatedAt: dbClient.updated_at,
 })
@@ -95,8 +99,7 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
   createClient: async (data: ClientFormData, userId: string) => {
     set({ loading: true, error: null })
     try {
-      // Tenta inserir com todos os campos (incluindo os novos)
-      let result = await supabase
+      const { data: result, error } = await supabase
         .from('clients')
         .insert({
           user_id: userId,
@@ -111,33 +114,17 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
           whatsapp_contact: data.whatsappContact,
           notes: data.notes,
           status: data.status,
+          has_secretary: data.hasSecretary,
+          secretary_name: data.secretaryName,
+          secretary_phone: data.secretaryPhone,
+          instagram_url: data.instagramUrl,
         })
         .select()
         .single()
 
-      // Se falhar por causa das colunas novas, tenta sem elas
-      if (result.error && result.error.message.includes('column')) {
-        result = await supabase
-          .from('clients')
-          .insert({
-            user_id: userId,
-            name: data.name,
-            location: data.location,
-            payment_method: data.paymentMethod,
-            monthly_budget: data.monthlyBudget,
-            campaign_link: data.campaignLink,
-            whatsapp_group: data.whatsappGroup,
-            whatsapp_contact: data.whatsappContact,
-            notes: data.notes,
-            status: data.status,
-          })
-          .select()
-          .single()
-      }
+      if (error) throw error
 
-      if (result.error) throw result.error
-
-      const newClient = mapClient(result.data)
+      const newClient = mapClient(result)
       set({
         clients: [newClient, ...get().clients],
         loading: false
@@ -154,41 +141,32 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
     set({ loading: true, error: null })
     try {
       const updateData: any = {}
-      if (data.name) updateData.name = data.name
+      if (data.name !== undefined) updateData.name = data.name
       if (data.medicalSpecialty !== undefined) updateData.medical_specialty = data.medicalSpecialty
       if (data.professionalRegistry !== undefined) updateData.professional_registry = data.professionalRegistry
       if (data.location !== undefined) updateData.location = data.location
-      if (data.paymentMethod) updateData.payment_method = data.paymentMethod
+      if (data.paymentMethod !== undefined) updateData.payment_method = data.paymentMethod
       if (data.monthlyBudget !== undefined) updateData.monthly_budget = data.monthlyBudget
       if (data.campaignLink !== undefined) updateData.campaign_link = data.campaignLink
       if (data.whatsappGroup !== undefined) updateData.whatsapp_group = data.whatsappGroup
       if (data.whatsappContact !== undefined) updateData.whatsapp_contact = data.whatsappContact
       if (data.notes !== undefined) updateData.notes = data.notes
-      if (data.status) updateData.status = data.status
+      if (data.status !== undefined) updateData.status = data.status
+      if (data.hasSecretary !== undefined) updateData.has_secretary = data.hasSecretary
+      if (data.secretaryName !== undefined) updateData.secretary_name = data.secretaryName
+      if (data.secretaryPhone !== undefined) updateData.secretary_phone = data.secretaryPhone
+      if (data.instagramUrl !== undefined) updateData.instagram_url = data.instagramUrl
 
-      let result = await supabase
+      const { data: result, error } = await supabase
         .from('clients')
         .update(updateData)
         .eq('id', id)
         .select()
         .single()
 
-      // Se falhar por causa das colunas novas, tenta sem elas
-      if (result.error && result.error.message.includes('column')) {
-        delete updateData.medical_specialty
-        delete updateData.professional_registry
+      if (error) throw error
 
-        result = await supabase
-          .from('clients')
-          .update(updateData)
-          .eq('id', id)
-          .select()
-          .single()
-      }
-
-      if (result.error) throw result.error
-
-      const updatedClient = mapClient(result.data)
+      const updatedClient = mapClient(result)
       const updatedClients = get().clients.map(c => c.id === id ? updatedClient : c)
 
       set({

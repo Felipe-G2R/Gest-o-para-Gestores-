@@ -26,6 +26,12 @@ export interface Client {
   whatsappContact: string | null
   notes: string | null
   status: ClientStatus
+  // Campos de Secretária
+  hasSecretary: boolean
+  secretaryName: string | null
+  secretaryPhone: string | null
+  // Instagram
+  instagramUrl: string | null
   createdAt: string
   updatedAt: string
 }
