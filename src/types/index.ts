@@ -89,3 +89,13 @@ export interface DiaryEntry {
 }
 
 export type DiaryEntryFormData = Omit<DiaryEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+
+// Rataria Types (Malandragem For Med)
+export interface RatariaEntry {
+  id: string
+  userId: string
+  title: string
+  content: string | null
+  createdAt: string
+  updatedAt: string
+}

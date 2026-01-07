@@ -101,10 +101,10 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
                           href={client.instagramUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-ghost btn-sm btn-square text-pink-500 hover:text-pink-600"
+                          className="btn btn-circle btn-sm bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 border-0 text-white hover:opacity-80"
                           title="Abrir Instagram"
                         >
-                          <Instagram className="w-5 h-5" />
+                          <Instagram className="w-4 h-4" />
                         </a>
                       ) : (
                         <span className="text-base-content/30">-</span>

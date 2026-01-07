@@ -1,0 +1,165 @@
+import { useState, useEffect } from 'react'
+import { Plus, Rat, Search } from 'lucide-react'
+import { MainLayout } from '@/components/layout'
+import { RatariaEntryCard, RatariaEditorModal } from '@/components/rataria'
+import { useRatariaStore } from '@/hooks/useRatariaStore'
+import type { RatariaEntry } from '@/types'
+
+export function RatariaPage() {
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [editingEntry, setEditingEntry] = useState<RatariaEntry | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const {
+    entries,
+    loading,
+    fetchEntries,
+    createEntry,
+    updateEntry,
+    deleteEntry
+  } = useRatariaStore()
+
+  // Carrega entradas ao montar
+  useEffect(() => {
+    fetchEntries()
+  }, [fetchEntries])
+
+  // Filtra entradas por busca
+  const filteredEntries = entries.filter(entry => {
+    if (!searchTerm) return true
+    const search = searchTerm.toLowerCase()
+    return (
+      entry.title.toLowerCase().includes(search) ||
+      (entry.content?.toLowerCase().includes(search) ?? false)
+    )
+  })
+
+  const handleNewEntry = () => {
+    setEditingEntry(null)
+    setIsEditorOpen(true)
+  }
+
+  const handleEditEntry = (entry: RatariaEntry) => {
+    setEditingEntry(entry)
+    setIsEditorOpen(true)
+  }
+
+  const handleDeleteEntry = async (id: string) => {
+    if (window.confirm('Deseja excluir esta anotação?')) {
+      await deleteEntry(id)
+    }
+  }
+
+  const handleSaveEntry = async (title: string, content: string) => {
+    setSaving(true)
+    try {
+      if (editingEntry) {
+        await updateEntry(editingEntry.id, title, content)
+      } else {
+        const newEntry = await createEntry(title, content)
+        if (newEntry) {
+          setEditingEntry(newEntry)
+        }
+      }
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleCloseEditor = () => {
+    setIsEditorOpen(false)
+    setEditingEntry(null)
+  }
+
+  return (
+    <MainLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center">
+              <Rat className="w-6 h-6 text-warning" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Malandragem For Med</h1>
+              <p className="text-base-content/60">Anotações pontuais e dicas</p>
+            </div>
+          </div>
+
+          <button onClick={handleNewEntry} className="btn btn-warning gap-2">
+            <Plus className="w-5 h-5" />
+            Nova Entrada
+          </button>
+        </div>
+
+        {/* Barra de busca */}
+        <div className="card bg-base-100 shadow">
+          <div className="card-body py-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/40" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar anotações..."
+                className="input input-bordered w-full pl-10"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Contador */}
+        <div className="text-sm text-base-content/60">
+          {filteredEntries.length} {filteredEntries.length === 1 ? 'anotação' : 'anotações'}
+          {searchTerm && ` encontrada${filteredEntries.length === 1 ? '' : 's'}`}
+        </div>
+
+        {/* Lista de entradas */}
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <span className="loading loading-spinner loading-lg text-warning"></span>
+          </div>
+        ) : filteredEntries.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredEntries.map((entry) => (
+              <RatariaEntryCard
+                key={entry.id}
+                entry={entry}
+                onEdit={() => handleEditEntry(entry)}
+                onDelete={() => handleDeleteEntry(entry.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="card bg-base-100 shadow">
+            <div className="card-body items-center text-center py-12">
+              <Rat className="w-16 h-16 text-base-content/20 mb-4" />
+              <h3 className="text-lg font-semibold text-base-content/60">
+                {searchTerm ? 'Nenhuma anotação encontrada' : 'Nenhuma anotação ainda'}
+              </h3>
+              <p className="text-base-content/40 mb-4">
+                {searchTerm ? 'Tente outro termo de busca' : 'Comece a registrar suas malandragens'}
+              </p>
+              {!searchTerm && (
+                <button onClick={handleNewEntry} className="btn btn-warning gap-2">
+                  <Plus className="w-5 h-5" />
+                  Criar Primeira Anotação
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Modal de edição */}
+      <RatariaEditorModal
+        isOpen={isEditorOpen}
+        onClose={handleCloseEditor}
+        entry={editingEntry}
+        onSave={handleSaveEntry}
+        saving={saving}
+      />
+    </MainLayout>
+  )
+}

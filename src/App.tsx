@@ -13,6 +13,7 @@ import {
   DiaryPage,
   CalendarPage,
   BasePage,
+  RatariaPage,
 } from '@/pages'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -112,6 +113,14 @@ function App() {
           element={
             <ProtectedRoute>
               <BasePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rataria"
+          element={
+            <ProtectedRoute>
+              <RatariaPage />
             </ProtectedRoute>
           }
         />

@@ -17,11 +17,16 @@ import {
   Users,
   MessageCircle,
   ExternalLink,
+  Instagram,
+  UserCheck,
+  Phone,
 } from 'lucide-react'
+import { useAuthStore } from '@/hooks/useAuthStore'
 
 export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { isAdmin } = useAuthStore()
 
   const { clients, loading, getClient, updateClient, deleteClient } =
     useClientsStore()
@@ -268,6 +273,75 @@ export function ClientDetailPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Instagram Card - Apenas Admin */}
+        {isAdmin() && client.instagramUrl && (
+          <div className="card bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-pink-500/20 shadow">
+            <div className="card-body">
+              <h3 className="card-title text-base text-pink-500 gap-2">
+                <Instagram className="w-5 h-5" />
+                Instagram
+              </h3>
+              <div className="flex items-center gap-4 mt-2">
+                <input
+                  value={client.instagramUrl}
+                  readOnly
+                  className="input input-bordered flex-1 font-mono text-sm"
+                />
+                <a
+                  href={client.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 border-0 text-white hover:opacity-80 gap-2"
+                >
+                  <Instagram className="w-5 h-5" />
+                  Abrir Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Secretária Card - Apenas Admin */}
+        {isAdmin() && client.hasSecretary && (
+          <div className="card bg-info/5 border border-info/20 shadow">
+            <div className="card-body">
+              <h3 className="card-title text-base text-info gap-2">
+                <UserCheck className="w-5 h-5" />
+                Informações da Secretária
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                {client.secretaryName && (
+                  <div>
+                    <label className="label">
+                      <span className="label-text text-base-content/60">Nome</span>
+                    </label>
+                    <p className="font-medium">{client.secretaryName}</p>
+                  </div>
+                )}
+                {client.secretaryPhone && (
+                  <div>
+                    <label className="label">
+                      <span className="label-text text-base-content/60">Telefone</span>
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium font-mono">{client.secretaryPhone}</p>
+                      <a
+                        href={`https://wa.me/${client.secretaryPhone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-circle btn-sm btn-success"
+                        title="WhatsApp da Secretária"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
