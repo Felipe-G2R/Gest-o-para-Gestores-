@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Client, ClientFormData } from '@/types'
 import { useClientsStore } from '@/hooks/useClientsStore'
 import { useAuthStore } from '@/hooks/useAuthStore'
-import { X, Save, Users, MessageCircle } from 'lucide-react'
+import { X, Save, Users, MessageCircle, Instagram, UserCheck } from 'lucide-react'
 
 interface ClientFormModalProps {
   show: boolean
@@ -22,6 +22,10 @@ const initialFormData: ClientFormData = {
   whatsappContact: null,
   notes: null,
   status: 'active',
+  hasSecretary: false,
+  secretaryName: null,
+  secretaryPhone: null,
+  instagramUrl: null,
 }
 
 export function ClientFormModal({ show, client, onClose }: ClientFormModalProps) {
@@ -29,7 +33,7 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
   const [loading, setLoading] = useState(false)
 
   const { createClient, updateClient } = useClientsStore()
-  const { user } = useAuthStore()
+  const { user, isAdmin } = useAuthStore()
 
   useEffect(() => {
     if (show && client) {
@@ -45,6 +49,10 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
         whatsappContact: client.whatsappContact,
         notes: client.notes,
         status: client.status,
+        hasSecretary: client.hasSecretary || false,
+        secretaryName: client.secretaryName,
+        secretaryPhone: client.secretaryPhone,
+        instagramUrl: client.instagramUrl,
       })
     } else if (show) {
       setForm(initialFormData)
@@ -71,7 +79,7 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box max-w-2xl">
+      <div className="modal-box max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="font-bold text-lg">
@@ -184,6 +192,32 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
               />
             </div>
 
+            {/* Instagram - Apenas Admin */}
+            {isAdmin() && (
+              <div className="form-control md:col-span-2">
+                <label className="label">
+                  <span className="label-text font-medium flex items-center gap-2">
+                    <Instagram className="w-4 h-4 text-pink-500" />
+                    Instagram
+                  </span>
+                </label>
+                <input
+                  type="url"
+                  value={form.instagramUrl || ''}
+                  onChange={(e) =>
+                    setForm({ ...form, instagramUrl: e.target.value || null })
+                  }
+                  placeholder="https://instagram.com/dra.mariasilva"
+                  className="input input-bordered"
+                />
+                <label className="label">
+                  <span className="label-text-alt text-base-content/60">
+                    Link completo do perfil do Instagram
+                  </span>
+                </label>
+              </div>
+            )}
+
             {/* Link da Campanha */}
             <div className="form-control md:col-span-2">
               <label className="label">
@@ -242,6 +276,75 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 </span>
               </label>
             </div>
+
+            {/* Divider - Secretária - Apenas Admin */}
+            {isAdmin() && (
+              <>
+                <div className="md:col-span-2 divider">
+                  <span className="flex items-center gap-2 text-sm">
+                    <UserCheck className="w-4 h-4" />
+                    Informações da Secretária
+                  </span>
+                </div>
+
+                {/* Tem Secretária */}
+                <div className="form-control md:col-span-2">
+                  <label className="label cursor-pointer justify-start gap-4">
+                    <input
+                      type="checkbox"
+                      checked={form.hasSecretary}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          hasSecretary: e.target.checked,
+                          secretaryName: e.target.checked ? form.secretaryName : null,
+                          secretaryPhone: e.target.checked ? form.secretaryPhone : null,
+                        })
+                      }
+                      className="checkbox checkbox-primary"
+                    />
+                    <span className="label-text font-medium">Possui Secretária</span>
+                  </label>
+                </div>
+
+                {/* Campos da Secretária (só aparecem se hasSecretary = true) */}
+                {form.hasSecretary && (
+                  <>
+                    {/* Nome da Secretária */}
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium">Nome da Secretária</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={form.secretaryName || ''}
+                        onChange={(e) =>
+                          setForm({ ...form, secretaryName: e.target.value || null })
+                        }
+                        placeholder="Ana Paula"
+                        className="input input-bordered"
+                      />
+                    </div>
+
+                    {/* Telefone da Secretária */}
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text font-medium">Telefone da Secretária</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={form.secretaryPhone || ''}
+                        onChange={(e) =>
+                          setForm({ ...form, secretaryPhone: e.target.value || null })
+                        }
+                        placeholder="5511999999999"
+                        className="input input-bordered"
+                      />
+                    </div>
+                  </>
+                )}
+              </>
+            )}
 
             {/* Status */}
             <div className="form-control">

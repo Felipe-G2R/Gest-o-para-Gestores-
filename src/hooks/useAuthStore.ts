@@ -7,6 +7,7 @@ interface AuthState {
   isAuthenticated: boolean
   error: string | null
   loading: boolean
+  isAdmin: () => boolean
   signIn: (email: string, password: string) => Promise<boolean>
   signUp: (email: string, password: string, name: string) => Promise<boolean>
   signOut: () => Promise<void>
@@ -20,6 +21,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   error: null,
   loading: false,
+
+  isAdmin: () => {
+    const { user } = get()
+    return user?.role === 'admin'
+  },
 
   signIn: async (email: string, password: string) => {
     set({ loading: true, error: null })
@@ -44,7 +50,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           name: profile?.full_name || data.user.email?.split('@')[0] || 'Usuário',
           fullName: profile?.full_name,
           avatarUrl: profile?.avatar_url,
-          role: 'user', // Default role
+          role: profile?.role || 'user',
           createdAt: data.user.created_at,
         }
 
@@ -124,7 +130,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         name: profile?.full_name || session.user.email?.split('@')[0] || 'Usuário',
         fullName: profile?.full_name,
         avatarUrl: profile?.avatar_url,
-        role: 'user',
+        role: profile?.role || 'user',
         createdAt: session.user.created_at,
       }
       set({ user, isAuthenticated: true, loading: false })

@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import type { Client } from '@/types'
 import { useClientsStore } from '@/hooks/useClientsStore'
+import { useAuthStore } from '@/hooks/useAuthStore'
 import { formatCurrency } from '@/utils/format'
-import { Eye, Edit, Trash2, ExternalLink, CreditCard, Banknote } from 'lucide-react'
+import { Eye, Edit, Trash2, ExternalLink, CreditCard, Banknote, Instagram } from 'lucide-react'
 
 interface ClientTableProps {
   clients: Client[]
@@ -13,6 +14,7 @@ interface ClientTableProps {
 export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
   const navigate = useNavigate()
   const { deleteClient } = useClientsStore()
+  const isAdmin = useAuthStore((state) => state.isAdmin)
 
   const handleDelete = (client: Client) => {
     if (window.confirm(`Deseja excluir o cliente "${client.name}"?`)) {
@@ -36,6 +38,8 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
               <th>Localidade</th>
               <th>Pagamento</th>
               <th>Verba Mensal</th>
+              {isAdmin() && <th>Secretária</th>}
+              {isAdmin() && <th>Instagram</th>}
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -43,13 +47,13 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-8">
+                <td colSpan={isAdmin() ? 8 : 6} className="text-center py-8">
                   <span className="loading loading-spinner loading-lg text-primary"></span>
                 </td>
               </tr>
             ) : clients.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-8 text-base-content/60">
+                <td colSpan={isAdmin() ? 8 : 6} className="text-center py-8 text-base-content/60">
                   Nenhum cliente encontrado
                 </td>
               </tr>
@@ -83,6 +87,30 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
                     </span>
                   </td>
                   <td className="font-mono">{formatCurrency(client.monthlyBudget)}</td>
+                  {isAdmin() && (
+                    <td>
+                      <span className={`badge ${client.hasSecretary ? 'badge-success' : 'badge-ghost'}`}>
+                        {client.hasSecretary ? 'Sim' : 'Não'}
+                      </span>
+                    </td>
+                  )}
+                  {isAdmin() && (
+                    <td>
+                      {client.instagramUrl ? (
+                        <a
+                          href={client.instagramUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-ghost btn-sm btn-square text-pink-500 hover:text-pink-600"
+                          title="Abrir Instagram"
+                        >
+                          <Instagram className="w-5 h-5" />
+                        </a>
+                      ) : (
+                        <span className="text-base-content/30">-</span>
+                      )}
+                    </td>
+                  )}
                   <td>
                     <span className={`badge ${statusConfig[client.status].class}`}>
                       {statusConfig[client.status].label}

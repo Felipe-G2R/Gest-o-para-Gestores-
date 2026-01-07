@@ -13,22 +13,27 @@ import {
   Bot,
   BookOpen,
   Calendar,
+  Database,
 } from 'lucide-react'
 
 const menuItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { name: 'Clientes', path: '/clients', icon: Users },
-  { name: 'TMI', path: '/tmi', icon: Target },
-  { name: 'Diário de Bordo', path: '/diary', icon: BookOpen },
-  { name: 'Calendário', path: '/calendar', icon: Calendar },
-  { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot },
-  { name: 'Configurações', path: '/settings', icon: Settings },
+  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, adminOnly: false },
+  { name: 'Clientes', path: '/clients', icon: Users, adminOnly: false },
+  { name: 'TMI', path: '/tmi', icon: Target, adminOnly: false },
+  { name: 'Diário de Bordo', path: '/diary', icon: BookOpen, adminOnly: false },
+  { name: 'Calendário', path: '/calendar', icon: Calendar, adminOnly: false },
+  { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot, adminOnly: false },
+  { name: 'BASE', path: '/base', icon: Database, adminOnly: true },
+  { name: 'Configurações', path: '/settings', icon: Settings, adminOnly: false },
 ]
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
-  const { user, signOut } = useAuthStore()
+  const { user, signOut, isAdmin } = useAuthStore()
   const navigate = useNavigate()
+
+  // Filtra os itens do menu baseado no role do usuário
+  const filteredMenuItems = menuItems.filter(item => !item.adminOnly || isAdmin())
 
   const handleLogout = async () => {
     await signOut()
@@ -65,7 +70,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
