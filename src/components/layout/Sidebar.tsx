@@ -13,7 +13,6 @@ import {
   Bot,
   BookOpen,
   Calendar,
-  Database,
   Rat,
 } from 'lucide-react'
 
@@ -24,7 +23,6 @@ const menuItems = [
   { name: 'Diário de Bordo', path: '/diary', icon: BookOpen, adminOnly: false },
   { name: 'Calendário', path: '/calendar', icon: Calendar, adminOnly: false },
   { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot, adminOnly: false },
-  { name: 'BASE', path: '/base', icon: Database, adminOnly: true },
   { name: 'Rataria', path: '/rataria', icon: Rat, adminOnly: false },
   { name: 'Configurações', path: '/settings', icon: Settings, adminOnly: false },
 ]
