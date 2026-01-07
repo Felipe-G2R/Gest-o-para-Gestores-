@@ -23,7 +23,7 @@ const menuItems = [
   { name: 'Diário de Bordo', path: '/diary', icon: BookOpen, adminOnly: false },
   { name: 'Calendário', path: '/calendar', icon: Calendar, adminOnly: false },
   { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot, adminOnly: false },
-  { name: 'Rataria', path: '/rataria', icon: Rat, adminOnly: false },
+  { name: 'Rataria', path: '/rataria', icon: Rat, adminOnly: true },
   { name: 'Configurações', path: '/settings', icon: Settings, adminOnly: false },
 ]
 

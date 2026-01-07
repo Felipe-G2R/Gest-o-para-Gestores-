@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Rat, Search } from 'lucide-react'
 import { MainLayout } from '@/components/layout'
 import { RatariaEntryCard, RatariaEditorModal } from '@/components/rataria'
 import { useRatariaStore } from '@/hooks/useRatariaStore'
+import { useAuthStore } from '@/hooks/useAuthStore'
 import type { RatariaEntry } from '@/types'
 
 export function RatariaPage() {
@@ -10,6 +12,9 @@ export function RatariaPage() {
   const [editingEntry, setEditingEntry] = useState<RatariaEntry | null>(null)
   const [saving, setSaving] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  const navigate = useNavigate()
+  const { isAdmin } = useAuthStore()
 
   const {
     entries,
@@ -20,10 +25,24 @@ export function RatariaPage() {
     deleteEntry
   } = useRatariaStore()
 
+  // Redireciona se não for admin
+  useEffect(() => {
+    if (!isAdmin()) {
+      navigate('/dashboard')
+    }
+  }, [isAdmin, navigate])
+
   // Carrega entradas ao montar
   useEffect(() => {
-    fetchEntries()
-  }, [fetchEntries])
+    if (isAdmin()) {
+      fetchEntries()
+    }
+  }, [fetchEntries, isAdmin])
+
+  // Não renderiza se não for admin
+  if (!isAdmin()) {
+    return null
+  }
 
   // Filtra entradas por busca
   const filteredEntries = entries.filter(entry => {
