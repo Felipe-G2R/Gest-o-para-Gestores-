@@ -22,14 +22,6 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
     }
   }
 
-  const statusConfig = {
-    active: { label: 'Ativo', class: 'badge-success' },
-    inactive: { label: 'Inativo', class: 'badge-error' },
-    paused: { label: 'Pausado', class: 'badge-warning' },
-    seller_on: { label: 'Seller/ON', class: 'badge-success' },
-    seller_off: { label: 'Seller/OFF', class: 'badge-error' },
-  }
-
   return (
     <div className="card bg-base-100 shadow">
       <div className="overflow-x-auto">
@@ -42,20 +34,20 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
               <th>Verba Mensal</th>
               {isAdmin() && <th>Secretária</th>}
               {isAdmin() && <th>Instagram</th>}
-              <th>Status</th>
+              {isAdmin() && <th>Seller</th>}
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={isAdmin() ? 8 : 6} className="text-center py-8">
+                <td colSpan={isAdmin() ? 8 : 5} className="text-center py-8">
                   <span className="loading loading-spinner loading-lg text-primary"></span>
                 </td>
               </tr>
             ) : clients.length === 0 ? (
               <tr>
-                <td colSpan={isAdmin() ? 8 : 6} className="text-center py-8 text-base-content/60">
+                <td colSpan={isAdmin() ? 8 : 5} className="text-center py-8 text-base-content/60">
                   Nenhum cliente encontrado
                 </td>
               </tr>
@@ -113,11 +105,18 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
                       )}
                     </td>
                   )}
-                  <td>
-                    <span className={`badge ${statusConfig[client.status].class}`}>
-                      {statusConfig[client.status].label}
-                    </span>
-                  </td>
+                  {isAdmin() && (
+                    <td>
+                      <div className="flex flex-col items-start gap-1">
+                        <span className={`badge ${client.hasSeller ? 'badge-success' : 'badge-ghost'}`}>
+                          {client.hasSeller ? 'Sim' : 'Não'}
+                        </span>
+                        {client.hasSeller && client.sellerName && (
+                          <span className="text-xs text-base-content/70">{client.sellerName}</span>
+                        )}
+                      </div>
+                    </td>
+                  )}
                   <td>
                     <div className="flex gap-1">
                       <button

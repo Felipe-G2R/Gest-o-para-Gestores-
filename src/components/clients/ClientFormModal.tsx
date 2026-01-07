@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Client, ClientFormData } from '@/types'
 import { useClientsStore } from '@/hooks/useClientsStore'
 import { useAuthStore } from '@/hooks/useAuthStore'
-import { X, Save, Users, MessageCircle, Instagram, UserCheck } from 'lucide-react'
+import { X, Save, Users, MessageCircle, Instagram, UserCheck, Briefcase } from 'lucide-react'
 
 interface ClientFormModalProps {
   show: boolean
@@ -26,6 +26,8 @@ const initialFormData: ClientFormData = {
   secretaryName: null,
   secretaryPhone: null,
   instagramUrl: null,
+  hasSeller: false,
+  sellerName: null,
 }
 
 export function ClientFormModal({ show, client, onClose }: ClientFormModalProps) {
@@ -53,6 +55,8 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
         secretaryName: client.secretaryName,
         secretaryPhone: client.secretaryPhone,
         instagramUrl: client.instagramUrl,
+        hasSeller: client.hasSeller || false,
+        sellerName: client.sellerName,
       })
     } else if (show) {
       setForm(initialFormData)
@@ -346,6 +350,60 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
               </>
             )}
 
+            {/* Divider - Seller - Apenas Admin */}
+            {isAdmin() && (
+              <>
+                <div className="md:col-span-2 divider">
+                  <span className="flex items-center gap-2 text-sm">
+                    <Briefcase className="w-4 h-4" />
+                    Informações do Seller
+                  </span>
+                </div>
+
+                {/* Tem Seller */}
+                <div className="form-control md:col-span-2">
+                  <label className="label cursor-pointer justify-start gap-4">
+                    <input
+                      type="checkbox"
+                      checked={form.hasSeller}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          hasSeller: e.target.checked,
+                          sellerName: e.target.checked ? form.sellerName : null,
+                        })
+                      }
+                      className="checkbox checkbox-primary"
+                    />
+                    <span className="label-text font-medium">Possui Seller</span>
+                  </label>
+                </div>
+
+                {/* Campos do Seller (só aparecem se hasSeller = true) */}
+                {form.hasSeller && (
+                  <div className="form-control md:col-span-2">
+                    <label className="label">
+                      <span className="label-text font-medium">Nome do Seller</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={form.sellerName || ''}
+                      onChange={(e) =>
+                        setForm({ ...form, sellerName: e.target.value || null })
+                      }
+                      placeholder="João"
+                      className="input input-bordered"
+                    />
+                    <label className="label">
+                      <span className="label-text-alt text-base-content/60">
+                        Apenas o primeiro nome do Seller
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </>
+            )}
+
             {/* Status */}
             <div className="form-control">
               <label className="label">
@@ -356,7 +414,7 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    status: e.target.value as 'active' | 'inactive' | 'paused' | 'seller_on' | 'seller_off',
+                    status: e.target.value as 'active' | 'inactive' | 'paused',
                   })
                 }
                 className="select select-bordered"
@@ -364,8 +422,6 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 <option value="active">Ativo</option>
                 <option value="paused">Pausado</option>
                 <option value="inactive">Inativo</option>
-                <option value="seller_on">Seller/ON</option>
-                <option value="seller_off">Seller/OFF</option>
               </select>
             </div>
           </div>

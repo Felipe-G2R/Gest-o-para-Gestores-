@@ -20,6 +20,7 @@ import {
   Instagram,
   UserCheck,
   Phone,
+  Briefcase,
 } from 'lucide-react'
 import { useAuthStore } from '@/hooks/useAuthStore'
 
@@ -51,8 +52,6 @@ export function ClientDetailPage() {
     active: { label: 'Ativo', class: 'badge-success' },
     inactive: { label: 'Inativo', class: 'badge-error' },
     paused: { label: 'Pausado', class: 'badge-warning' },
-    seller_on: { label: 'Seller/ON', class: 'badge-success' },
-    seller_off: { label: 'Seller/OFF', class: 'badge-error' },
   }
 
   const handleSaveNotes = async (notes: string | null) => {
@@ -340,6 +339,28 @@ export function ClientDetailPage() {
                         <Phone className="w-4 h-4" />
                       </a>
                     </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Seller Card - Apenas Admin */}
+        {isAdmin() && client.hasSeller && (
+          <div className="card bg-warning/5 border border-warning/20 shadow">
+            <div className="card-body">
+              <h3 className="card-title text-base text-warning gap-2">
+                <Briefcase className="w-5 h-5" />
+                Informações do Seller
+              </h3>
+              <div className="mt-2">
+                {client.sellerName && (
+                  <div>
+                    <label className="label">
+                      <span className="label-text text-base-content/60">Nome</span>
+                    </label>
+                    <p className="font-medium">{client.sellerName}</p>
                   </div>
                 )}
               </div>

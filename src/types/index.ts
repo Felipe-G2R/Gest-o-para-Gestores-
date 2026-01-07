@@ -1,5 +1,5 @@
 export type PaymentMethod = 'card' | 'pix'
-export type ClientStatus = 'active' | 'inactive' | 'paused' | 'seller_on' | 'seller_off'
+export type ClientStatus = 'active' | 'inactive' | 'paused'
 export type UserRole = 'admin' | 'user'
 
 export interface User {
@@ -32,6 +32,9 @@ export interface Client {
   secretaryPhone: string | null
   // Instagram
   instagramUrl: string | null
+  // Campos de Seller
+  hasSeller: boolean
+  sellerName: string | null
   createdAt: string
   updatedAt: string
 }

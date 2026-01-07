@@ -41,6 +41,8 @@ const mapClient = (dbClient: any): Client => ({
   secretaryName: dbClient.secretary_name || null,
   secretaryPhone: dbClient.secretary_phone || null,
   instagramUrl: dbClient.instagram_url || null,
+  hasSeller: dbClient.has_seller || false,
+  sellerName: dbClient.seller_name || null,
   createdAt: dbClient.created_at,
   updatedAt: dbClient.updated_at,
 })
@@ -118,6 +120,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
           secretary_name: data.secretaryName,
           secretary_phone: data.secretaryPhone,
           instagram_url: data.instagramUrl,
+          has_seller: data.hasSeller,
+          seller_name: data.sellerName,
         })
         .select()
         .single()
@@ -156,6 +160,8 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
       if (data.secretaryName !== undefined) updateData.secretary_name = data.secretaryName
       if (data.secretaryPhone !== undefined) updateData.secretary_phone = data.secretaryPhone
       if (data.instagramUrl !== undefined) updateData.instagram_url = data.instagramUrl
+      if (data.hasSeller !== undefined) updateData.has_seller = data.hasSeller
+      if (data.sellerName !== undefined) updateData.seller_name = data.sellerName
 
       const { data: result, error } = await supabase
         .from('clients')
