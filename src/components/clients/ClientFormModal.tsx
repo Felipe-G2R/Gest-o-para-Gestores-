@@ -356,7 +356,7 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    status: e.target.value as 'active' | 'inactive' | 'paused',
+                    status: e.target.value as 'active' | 'inactive' | 'paused' | 'seller_on' | 'seller_off',
                   })
                 }
                 className="select select-bordered"
@@ -364,6 +364,8 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
                 <option value="active">Ativo</option>
                 <option value="paused">Pausado</option>
                 <option value="inactive">Inativo</option>
+                <option value="seller_on">Seller/ON</option>
+                <option value="seller_off">Seller/OFF</option>
               </select>
             </div>
           </div>

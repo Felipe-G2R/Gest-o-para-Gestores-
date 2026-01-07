@@ -26,6 +26,8 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
     active: { label: 'Ativo', class: 'badge-success' },
     inactive: { label: 'Inativo', class: 'badge-error' },
     paused: { label: 'Pausado', class: 'badge-warning' },
+    seller_on: { label: 'Seller/ON', class: 'badge-success' },
+    seller_off: { label: 'Seller/OFF', class: 'badge-error' },
   }
 
   return (

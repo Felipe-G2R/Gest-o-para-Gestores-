@@ -1,5 +1,5 @@
 export type PaymentMethod = 'card' | 'pix'
-export type ClientStatus = 'active' | 'inactive' | 'paused'
+export type ClientStatus = 'active' | 'inactive' | 'paused' | 'seller_on' | 'seller_off'
 export type UserRole = 'admin' | 'user'
 
 export interface User {
