@@ -35,6 +35,8 @@ export interface Client {
   // Campos de Seller
   hasSeller: boolean
   sellerName: string | null
+  // Ordem de exibição (para reordenação)
+  displayOrder: number
   createdAt: string
   updatedAt: string
 }

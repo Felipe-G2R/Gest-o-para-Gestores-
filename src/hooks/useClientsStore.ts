@@ -21,6 +21,7 @@ interface ClientsState {
   updateClient: (id: string, data: Partial<ClientFormData>) => Promise<Client | null>
   deleteClient: (id: string) => Promise<boolean>
   setSelectedClient: (client: Client | null) => void
+  reorderClients: (clientIds: string[]) => Promise<boolean>
 }
 
 const mapClient = (dbClient: any): Client => ({
@@ -43,6 +44,7 @@ const mapClient = (dbClient: any): Client => ({
   instagramUrl: dbClient.instagram_url || null,
   hasSeller: dbClient.has_seller || false,
   sellerName: dbClient.seller_name || null,
+  displayOrder: dbClient.display_order ?? 0,
   createdAt: dbClient.created_at,
   updatedAt: dbClient.updated_at,
 })
@@ -69,6 +71,7 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
       const { data, error } = await supabase
         .from('clients')
         .select('*')
+        .order('display_order', { ascending: true })
         .order('name', { ascending: true })
 
       if (error) throw error
@@ -122,6 +125,7 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
           instagram_url: data.instagramUrl,
           has_seller: data.hasSeller,
           seller_name: data.sellerName,
+          display_order: data.displayOrder ?? 0,
         })
         .select()
         .single()
@@ -162,6 +166,7 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
       if (data.instagramUrl !== undefined) updateData.instagram_url = data.instagramUrl
       if (data.hasSeller !== undefined) updateData.has_seller = data.hasSeller
       if (data.sellerName !== undefined) updateData.seller_name = data.sellerName
+      if (data.displayOrder !== undefined) updateData.display_order = data.displayOrder
 
       const { data: result, error } = await supabase
         .from('clients')
@@ -219,5 +224,35 @@ export const useClientsStore = create<ClientsState>((set, get) => ({
 
   setSelectedClient: (client: Client | null) => {
     set({ selectedClient: client })
+  },
+
+  reorderClients: async (clientIds: string[]) => {
+    try {
+      // Atualizar ordem local imediatamente para feedback visual
+      const reorderedClients = clientIds
+        .map((id, index) => {
+          const client = get().clients.find(c => c.id === id)
+          return client ? { ...client, displayOrder: index } : null
+        })
+        .filter((c): c is Client => c !== null)
+
+      set({ clients: reorderedClients })
+
+      // Atualizar no banco de dados
+      const updates = clientIds.map((id, index) =>
+        supabase
+          .from('clients')
+          .update({ display_order: index })
+          .eq('id', id)
+      )
+
+      await Promise.all(updates)
+      return true
+    } catch (error: any) {
+      console.error('Error reordering clients:', error)
+      // Em caso de erro, recarregar do banco
+      get().fetchClients()
+      return false
+    }
   }
 }))

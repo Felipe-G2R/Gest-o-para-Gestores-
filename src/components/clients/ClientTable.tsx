@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Client } from '@/types'
 import { useClientsStore } from '@/hooks/useClientsStore'
 import { useAuthStore } from '@/hooks/useAuthStore'
 import { formatCurrency } from '@/utils/format'
-import { Eye, Edit, Trash2, ExternalLink, CreditCard, Banknote, Instagram } from 'lucide-react'
+import { Eye, Edit, Trash2, ExternalLink, CreditCard, Banknote, Instagram, GripVertical } from 'lucide-react'
 
 interface ClientTableProps {
   clients: Client[]
@@ -13,13 +14,64 @@ interface ClientTableProps {
 
 export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
   const navigate = useNavigate()
-  const { deleteClient } = useClientsStore()
+  const { deleteClient, reorderClients } = useClientsStore()
   const isAdmin = useAuthStore((state) => state.isAdmin)
+
+  // Estados para drag-and-drop
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
 
   const handleDelete = (client: Client) => {
     if (window.confirm(`Deseja excluir o cliente "${client.name}"?`)) {
       deleteClient(client.id)
     }
+  }
+
+  // Handlers de drag-and-drop (apenas para admin)
+  const handleDragStart = (e: React.DragEvent, clientId: string) => {
+    setDraggedId(clientId)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', clientId)
+  }
+
+  const handleDragOver = (e: React.DragEvent, clientId: string) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    if (clientId !== draggedId) {
+      setDragOverId(clientId)
+    }
+  }
+
+  const handleDragLeave = () => {
+    setDragOverId(null)
+  }
+
+  const handleDrop = async (e: React.DragEvent, targetId: string) => {
+    e.preventDefault()
+    setDragOverId(null)
+
+    if (!draggedId || draggedId === targetId) {
+      setDraggedId(null)
+      return
+    }
+
+    // Calcular nova ordem
+    const currentIds = clients.map(c => c.id)
+    const draggedIndex = currentIds.indexOf(draggedId)
+    const targetIndex = currentIds.indexOf(targetId)
+
+    // Remover item arrastado e inserir na nova posição
+    const newIds = [...currentIds]
+    newIds.splice(draggedIndex, 1)
+    newIds.splice(targetIndex, 0, draggedId)
+
+    await reorderClients(newIds)
+    setDraggedId(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedId(null)
+    setDragOverId(null)
   }
 
   return (
@@ -28,6 +80,7 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
         <table className="table">
           <thead>
             <tr>
+              {isAdmin() && <th className="w-10"></th>}
               <th>Nome</th>
               <th>Localidade</th>
               <th>Pagamento</th>
@@ -41,19 +94,37 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={isAdmin() ? 8 : 5} className="text-center py-8">
+                <td colSpan={isAdmin() ? 9 : 5} className="text-center py-8">
                   <span className="loading loading-spinner loading-lg text-primary"></span>
                 </td>
               </tr>
             ) : clients.length === 0 ? (
               <tr>
-                <td colSpan={isAdmin() ? 8 : 5} className="text-center py-8 text-base-content/60">
+                <td colSpan={isAdmin() ? 9 : 5} className="text-center py-8 text-base-content/60">
                   Nenhum cliente encontrado
                 </td>
               </tr>
             ) : (
               clients.map((client) => (
-                <tr key={client.id} className="hover">
+                <tr
+                  key={client.id}
+                  className={`hover transition-all ${
+                    draggedId === client.id ? 'opacity-50' : ''
+                  } ${
+                    dragOverId === client.id ? 'bg-primary/10 border-t-2 border-primary' : ''
+                  }`}
+                  draggable={isAdmin()}
+                  onDragStart={isAdmin() ? (e) => handleDragStart(e, client.id) : undefined}
+                  onDragOver={isAdmin() ? (e) => handleDragOver(e, client.id) : undefined}
+                  onDragLeave={isAdmin() ? handleDragLeave : undefined}
+                  onDrop={isAdmin() ? (e) => handleDrop(e, client.id) : undefined}
+                  onDragEnd={isAdmin() ? handleDragEnd : undefined}
+                >
+                  {isAdmin() && (
+                    <td className="w-10 cursor-grab active:cursor-grabbing">
+                      <GripVertical className="w-4 h-4 text-base-content/40 hover:text-base-content/70" />
+                    </td>
+                  )}
                   <td>
                     <div className="flex flex-col">
                       <span className="font-medium">{client.name}</span>
@@ -83,9 +154,14 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
                   <td className="font-mono">{formatCurrency(client.monthlyBudget)}</td>
                   {isAdmin() && (
                     <td>
-                      <span className={`badge ${client.hasSecretary ? 'badge-success' : 'badge-ghost'}`}>
-                        {client.hasSecretary ? 'Sim' : 'Não'}
-                      </span>
+                      <div className="flex flex-col items-start gap-1">
+                        <span className={`badge ${client.hasSecretary ? 'badge-success' : 'badge-ghost'}`}>
+                          {client.hasSecretary ? 'Sim' : 'Não'}
+                        </span>
+                        {client.hasSecretary && client.secretaryName && (
+                          <span className="text-xs text-base-content/70">{client.secretaryName}</span>
+                        )}
+                      </div>
                     </td>
                   )}
                   {isAdmin() && (

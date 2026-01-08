@@ -28,6 +28,7 @@ const initialFormData: ClientFormData = {
   instagramUrl: null,
   hasSeller: false,
   sellerName: null,
+  displayOrder: 0,
 }
 
 export function ClientFormModal({ show, client, onClose }: ClientFormModalProps) {
@@ -57,6 +58,7 @@ export function ClientFormModal({ show, client, onClose }: ClientFormModalProps)
         instagramUrl: client.instagramUrl,
         hasSeller: client.hasSeller || false,
         sellerName: client.sellerName,
+        displayOrder: client.displayOrder ?? 0,
       })
     } else if (show) {
       setForm(initialFormData)
