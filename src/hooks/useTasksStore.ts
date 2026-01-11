@@ -136,7 +136,15 @@ export const useTasksStore = create<TasksState>((set, get) => ({
 
   deleteTask: async (id) => {
     try {
-      const { error } = await supabase.from('tasks').delete().eq('id', id)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('User not authenticated')
+
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id)
+
       if (error) throw error
 
       set((state) => ({
