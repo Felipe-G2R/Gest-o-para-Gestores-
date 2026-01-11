@@ -14,6 +14,7 @@ import {
   BookOpen,
   Calendar,
   Rat,
+  KeyRound,
 } from 'lucide-react'
 
 const menuItems = [
@@ -24,6 +25,7 @@ const menuItems = [
   { name: 'Calendário', path: '/calendar', icon: Calendar, adminOnly: false },
   { name: 'Gerenc[IA]', path: '/gerencia', icon: Bot, adminOnly: false },
   { name: 'Rataria', path: '/rataria', icon: Rat, adminOnly: true },
+  { name: 'Login/Senhas', path: '/acessos', icon: KeyRound, adminOnly: true },
   { name: 'Configurações', path: '/settings', icon: Settings, adminOnly: false },
 ]
 

@@ -104,3 +104,16 @@ export interface RatariaEntry {
   createdAt: string
   updatedAt: string
 }
+
+// Access Types (Login/Senhas)
+export interface AccessEntry {
+  id: string
+  userId: string
+  title: string
+  url: string | null
+  username: string | null
+  password: string | null
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}

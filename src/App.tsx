@@ -14,6 +14,7 @@ import {
   CalendarPage,
   BasePage,
   RatariaPage,
+  AccessPage,
 } from '@/pages'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -121,6 +122,14 @@ function App() {
           element={
             <ProtectedRoute>
               <RatariaPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acessos"
+          element={
+            <ProtectedRoute>
+              <AccessPage />
             </ProtectedRoute>
           }
         />
