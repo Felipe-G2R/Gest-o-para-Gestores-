@@ -113,16 +113,20 @@ export function ClientTable({ clients, loading, onEdit }: ClientTableProps) {
                   } ${
                     dragOverId === client.id ? 'bg-primary/10 border-t-2 border-primary' : ''
                   }`}
-                  draggable={isAdmin()}
-                  onDragStart={isAdmin() ? (e) => handleDragStart(e, client.id) : undefined}
                   onDragOver={isAdmin() ? (e) => handleDragOver(e, client.id) : undefined}
                   onDragLeave={isAdmin() ? handleDragLeave : undefined}
                   onDrop={isAdmin() ? (e) => handleDrop(e, client.id) : undefined}
-                  onDragEnd={isAdmin() ? handleDragEnd : undefined}
                 >
                   {isAdmin() && (
-                    <td className="w-10 cursor-grab active:cursor-grabbing">
-                      <GripVertical className="w-4 h-4 text-base-content/40 hover:text-base-content/70" />
+                    <td className="w-10">
+                      <div
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, client.id)}
+                        onDragEnd={handleDragEnd}
+                        className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-base-200"
+                      >
+                        <GripVertical className="w-4 h-4 text-base-content/40 hover:text-base-content/70" />
+                      </div>
                     </td>
                   )}
                   <td>
