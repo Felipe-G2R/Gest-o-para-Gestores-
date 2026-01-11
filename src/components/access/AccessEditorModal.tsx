@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { X, Eye, EyeOff } from 'lucide-react'
-import type { AccessEntry } from '@/types'
+import type { AccessEntry, AccessFolder } from '@/types'
 
 interface AccessEditorModalProps {
   isOpen: boolean
   onClose: () => void
   entry: AccessEntry | null
+  folders: AccessFolder[]
+  currentFolderId: string | null
   onSave: (data: {
+    folderId: string | null
     title: string
     url: string | null
     username: string | null
@@ -20,9 +23,12 @@ export function AccessEditorModal({
   isOpen,
   onClose,
   entry,
+  folders,
+  currentFolderId,
   onSave,
   saving = false
 }: AccessEditorModalProps) {
+  const [folderId, setFolderId] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [username, setUsername] = useState('')
@@ -32,6 +38,7 @@ export function AccessEditorModal({
 
   useEffect(() => {
     if (isOpen) {
+      setFolderId(entry?.folderId ?? currentFolderId)
       setTitle(entry?.title || '')
       setUrl(entry?.url || '')
       setUsername(entry?.username || '')
@@ -39,13 +46,14 @@ export function AccessEditorModal({
       setNotes(entry?.notes || '')
       setShowPassword(false)
     }
-  }, [entry, isOpen])
+  }, [entry, isOpen, currentFolderId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) return
 
     await onSave({
+      folderId,
       title: title.trim(),
       url: url.trim() || null,
       username: username.trim() || null,
@@ -72,6 +80,23 @@ export function AccessEditorModal({
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Folder */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Pasta</span>
+            </label>
+            <select
+              value={folderId || ''}
+              onChange={(e) => setFolderId(e.target.value || null)}
+              className="select select-bordered"
+            >
+              <option value="">Sem pasta</option>
+              {folders.map((f) => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Title */}
           <div className="form-control">
             <label className="label">

@@ -106,14 +106,34 @@ export interface RatariaEntry {
 }
 
 // Access Types (Login/Senhas)
+export interface AccessFolder {
+  id: string
+  userId: string
+  name: string
+  color: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface AccessEntry {
   id: string
   userId: string
+  folderId: string | null
   title: string
   url: string | null
   username: string | null
   password: string | null
   notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AccessDocument {
+  id: string
+  userId: string
+  folderId: string | null
+  title: string
+  content: string | null
   createdAt: string
   updatedAt: string
 }

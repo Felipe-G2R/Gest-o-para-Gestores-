@@ -1,2 +1,5 @@
 export { AccessEntryCard } from './AccessEntryCard'
 export { AccessEditorModal } from './AccessEditorModal'
+export { FolderModal } from './FolderModal'
+export { AccessDocumentCard } from './AccessDocumentCard'
+export { AccessDocumentEditorModal } from './AccessDocumentEditorModal'
