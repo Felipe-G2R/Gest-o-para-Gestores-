@@ -1,6 +1,7 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import Image from '@tiptap/extension-image'
 import {
   Bold,
   Italic,
@@ -9,9 +10,12 @@ import {
   Heading1,
   Heading2,
   Undo,
-  Redo
+  Redo,
+  ImagePlus,
+  Loader2,
 } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { uploadImage } from '@/utils/imageUpload'
 
 interface RichTextEditorProps {
   content: string
@@ -26,6 +30,9 @@ export function RichTextEditor({
   placeholder = 'Comece a escrever...',
   editable = true
 }: RichTextEditorProps) {
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -35,7 +42,14 @@ export function RichTextEditor({
       }),
       Placeholder.configure({
         placeholder
-      })
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
+        HTMLAttributes: {
+          class: 'rounded-lg max-w-full h-auto my-4',
+        },
+      }),
     ],
     content,
     editable,
@@ -49,6 +63,35 @@ export function RichTextEditor({
       editor.commands.setContent(content)
     }
   }, [content, editor])
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !editor) return
+
+    setUploading(true)
+    try {
+      const result = await uploadImage(file)
+
+      if (result.success && result.url) {
+        editor.chain().focus().setImage({ src: result.url }).run()
+      } else {
+        alert(result.error || 'Erro ao fazer upload da imagem')
+      }
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Erro ao fazer upload da imagem')
+    } finally {
+      setUploading(false)
+      // Limpar input para permitir selecionar o mesmo arquivo novamente
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const handleImageButtonClick = () => {
+    fileInputRef.current?.click()
+  }
 
   if (!editor) {
     return null
@@ -112,6 +155,30 @@ export function RichTextEditor({
           >
             <ListOrdered className="w-4 h-4" />
           </button>
+
+          <div className="divider divider-horizontal mx-1"></div>
+
+          {/* Botão de imagem */}
+          <button
+            type="button"
+            onClick={handleImageButtonClick}
+            disabled={uploading}
+            className="btn btn-ghost btn-sm"
+            title="Adicionar imagem"
+          >
+            {uploading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <ImagePlus className="w-4 h-4" />
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
 
           <div className="divider divider-horizontal mx-1"></div>
 
